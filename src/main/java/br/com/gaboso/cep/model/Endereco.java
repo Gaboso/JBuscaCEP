@@ -1,6 +1,6 @@
 package br.com.gaboso.cep.model;
 
-public class Cep {
+public class Endereco {
 
     private String cep;
     private String estado;
@@ -9,6 +9,13 @@ public class Cep {
     private String rua;
     private Float latitude;
     private Float longitude;
+
+    public Endereco() {
+    }
+
+    public Endereco(String cep) {
+        setCep(cep);
+    }
 
     public String getCep() {
         return cep;
@@ -66,8 +73,16 @@ public class Cep {
         this.longitude = longitude;
     }
 
-    public Cep(String cep) {
-        setCep(cep);
+    @Override
+    public String toString() {
+        return "Endereco{" +
+            "cep='" + cep + '\'' +
+            ", estado='" + estado + '\'' +
+            ", cidade='" + cidade + '\'' +
+            ", bairro='" + bairro + '\'' +
+            ", rua='" + rua + '\'' +
+            ", latitude=" + latitude +
+            ", longitude=" + longitude +
+            '}';
     }
-
 }
