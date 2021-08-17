@@ -18,7 +18,10 @@ public class JBuscaCEP {
     private static final String URL_CIDADE = "span[itemprop=addressLocality]";
     private static final String URL_ESTADO = "span[itemprop=addressRegion]";
 
-    public Endereco getEndereco(String cep) {
+    private JBuscaCEP() {
+    }
+
+    public static Endereco getEndereco(String cep) {
         final String cepLimpo = limparCEP(cep);
 
         if (cepLimpo.length() != 8) {
@@ -54,7 +57,7 @@ public class JBuscaCEP {
         return endereco;
     }
 
-    private Float getNumero(String texto) {
+    private static Float getNumero(String texto) {
         float numero = 0F;
         String[] textoArray = texto.split(": ");
 
@@ -70,11 +73,11 @@ public class JBuscaCEP {
         return numero;
     }
 
-    private String limparCEP(String cep) {
+    private static String limparCEP(String cep) {
         return cep.replaceAll("[^0-9]", "");
     }
 
-    private boolean isValidoLatLong(String latLong) {
+    private static boolean isValidoLatLong(String latLong) {
         if (latLong != null) {
             String[] latLongArray = latLong.split(" / ");
             return latLongArray.length >= 2;
