@@ -1,5 +1,5 @@
 # JBuscaCEP
-Buscador de CEP utilizando Java 8 e JSoup 1.14.2
+Buscador de CEP utilizando Java 8 e JSoup 1.14.3
 
 Exemplo de uso:
 

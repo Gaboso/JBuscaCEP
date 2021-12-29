@@ -21,7 +21,7 @@ public class Endereco {
         return cep;
     }
 
-    private void setCep(String cep) {
+    public void setCep(String cep) {
         this.cep = cep;
     }
 

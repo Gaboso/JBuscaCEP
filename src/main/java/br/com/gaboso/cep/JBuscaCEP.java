@@ -1,22 +1,14 @@
 package br.com.gaboso.cep;
 
 import br.com.gaboso.cep.model.Endereco;
+import br.com.gaboso.cep.util.JSoupUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.nodes.Document;
-
-import static br.com.gaboso.cep.util.JSoupUtils.getDocument;
-import static br.com.gaboso.cep.util.JSoupUtils.getTexto;
+import org.apache.logging.log4j.util.Strings;
 
 public class JBuscaCEP {
 
     private static final Logger LOGGER = LogManager.getLogger(JBuscaCEP.class.getName());
-
-    private static final String URL_RUA = "span[itemprop=streetAddress]";
-    private static final String URL_BAIRRO = "td:gt(1)";
-    private static final String URL_LAT_LONG = "h4";
-    private static final String URL_CIDADE = "span[itemprop=addressLocality]";
-    private static final String URL_ESTADO = "span[itemprop=addressRegion]";
 
     private JBuscaCEP() {
     }
@@ -24,7 +16,7 @@ public class JBuscaCEP {
     public static Endereco getEndereco(String cep) {
         final String cepLimpo = limparCEP(cep);
 
-        if (cepLimpo.length() != 8) {
+        if (null == cepLimpo || cepLimpo.length() != 8) {
             LOGGER.error("CEP inválido");
             return new Endereco();
         }
@@ -32,23 +24,23 @@ public class JBuscaCEP {
         Endereco endereco = new Endereco(cepLimpo);
 
         try {
-            Document document = getDocument(cepLimpo);
+            JSoupUtils jSoupUtils = new JSoupUtils(cepLimpo);
 
-            if (document != null) {
-                endereco.setRua(getTexto(document.select(URL_RUA)));
-                endereco.setBairro(getTexto(document.select(URL_BAIRRO)));
-                endereco.setCidade(getTexto(document.select(URL_CIDADE)));
-                endereco.setEstado(getTexto(document.select(URL_ESTADO)));
+            if (jSoupUtils.isEnderecoInvalido()) {
+                endereco.setCep(null);
+                return endereco;
+            }
 
-                String latLong = getTexto(document.select(URL_LAT_LONG));
-                if (isValidoLatLong(latLong)) {
-                    String[] latLongArray = latLong.split(" / ");
-                    endereco.setLatitude(getNumero(latLongArray[0]));
-                    endereco.setLongitude(getNumero(latLongArray[1]));
-                }
+            endereco.setRua(jSoupUtils.getRua());
+            endereco.setBairro(jSoupUtils.getBairro());
+            endereco.setCidade(jSoupUtils.getCidade());
+            endereco.setEstado(jSoupUtils.getEstado());
 
-            } else {
-                LOGGER.error("Não foi possível carregar o endereço a partir do cep");
+            String latLong = jSoupUtils.getLatLong();
+            if (isValidoLatLong(latLong)) {
+                String[] latLongArray = latLong.split(" / ");
+                endereco.setLatitude(getNumero(latLongArray[0]));
+                endereco.setLongitude(getNumero(latLongArray[1]));
             }
 
         } catch (Exception e) {
@@ -74,6 +66,10 @@ public class JBuscaCEP {
     }
 
     private static String limparCEP(String cep) {
+        if (Strings.isBlank(cep)) {
+            return null;
+        }
+
         return cep.replaceAll("[^0-9]", "");
     }
 
