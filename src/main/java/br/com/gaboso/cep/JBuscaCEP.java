@@ -17,7 +17,7 @@ public class JBuscaCEP {
         final String cepLimpo = limparCEP(cep);
 
         if (null == cepLimpo || cepLimpo.length() != 8) {
-            LOGGER.error("CEP inválido");
+            LOGGER.error("CEP inv\u00E1lido");
             return new Endereco();
         }
 
